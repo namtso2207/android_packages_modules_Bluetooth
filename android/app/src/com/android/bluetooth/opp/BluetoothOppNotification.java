@@ -45,6 +45,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
+import android.os.SystemProperties;
 import android.text.format.Formatter;
 import android.util.Log;
 
@@ -556,78 +557,82 @@ class BluetoothOppNotification {
             Intent baseIntent = new Intent().setDataAndNormalize(contentUri)
                     .setClassName(mContext,
                             BluetoothOppReceiver.class.getName());
-            Notification.Action actionDecline =
-                    new Notification.Action.Builder(Icon.createWithResource(mContext,
-                            R.drawable.ic_decline),
-                            mContext.getText(R.string.incoming_file_confirm_cancel),
-                            PendingIntent.getBroadcast(mContext, 0,
-                                    new Intent(baseIntent).setAction(Constants.ACTION_DECLINE),
-                                    PendingIntent.FLAG_IMMUTABLE)).build();
-            Notification.Action actionAccept = new Notification.Action.Builder(
-                    Icon.createWithResource(mContext,R.drawable.ic_accept),
-                    mContext.getText(R.string.incoming_file_confirm_ok),
-                    PendingIntent.getBroadcast(mContext, 0,
-                            new Intent(baseIntent).setAction(Constants.ACTION_ACCEPT),
-                            PendingIntent.FLAG_IMMUTABLE)).build();
-            Notification public_n =
-                    new Notification.Builder(mContext, OPP_NOTIFICATION_CHANNEL).setOnlyAlertOnce(
-                            true)
-                            .setOngoing(true)
-                            .setWhen(info.mTimeStamp)
-                            .addAction(actionDecline)
-                            .addAction(actionAccept)
-                            .setContentIntent(PendingIntent.getBroadcast(mContext, 0,
-                                    new Intent(baseIntent).setAction(
-                                            Constants.ACTION_INCOMING_FILE_CONFIRM),
-                                    PendingIntent.FLAG_IMMUTABLE))
-                            .setDeleteIntent(PendingIntent.getBroadcast(mContext, 0,
-                                    new Intent(baseIntent).setAction(Constants.ACTION_HIDE),
-                                    PendingIntent.FLAG_IMMUTABLE))
-                            .setColor(mContext.getResources()
-                                    .getColor(
-                                            android.R.color
-                                                    .system_notification_accent_color,
-                                            mContext.getTheme()))
-                            .setContentTitle(mContext.getText(
-                                    R.string.incoming_file_confirm_Notification_title))
-                            .setContentText(fileNameSafe)
-                            .setStyle(new Notification.BigTextStyle().bigText(mContext.getString(
-                                    R.string.incoming_file_confirm_Notification_content,
-                                    info.mDeviceName, fileNameSafe)))
-                            .setSubText(Formatter.formatFileSize(mContext, info.mTotalBytes))
-                            .setSmallIcon(R.drawable.bt_incomming_file_notification)
-                            .setLocalOnly(true)
-                            .build();
-            Notification n =
-                    new Notification.Builder(mContext, OPP_NOTIFICATION_CHANNEL).setOnlyAlertOnce(
-                            true)
-                            .setOngoing(true)
-                            .setWhen(info.mTimeStamp)
-                            .setContentIntent(PendingIntent.getBroadcast(mContext, 0,
-                                    new Intent(baseIntent).setAction(
-                                            Constants.ACTION_INCOMING_FILE_CONFIRM),
-                                    PendingIntent.FLAG_IMMUTABLE))
-                            .setDeleteIntent(PendingIntent.getBroadcast(mContext, 0,
-                                    new Intent(baseIntent).setAction(Constants.ACTION_HIDE),
-                                    PendingIntent.FLAG_IMMUTABLE))
-                            .setColor(mContext.getResources()
-                                    .getColor(
-                                            android.R.color
-                                                    .system_notification_accent_color,
-                                            mContext.getTheme()))
-                            .setContentTitle(mContext.getText(
-                                    R.string.incoming_file_confirm_Notification_title))
-                            .setContentText(fileNameSafe)
-                            .setStyle(new Notification.BigTextStyle().bigText(mContext.getString(
-                                    R.string.incoming_file_confirm_Notification_content,
-                                    info.mDeviceName, fileNameSafe)))
-                            .setSubText(Formatter.formatFileSize(mContext, info.mTotalBytes))
-                            .setSmallIcon(R.drawable.bt_incomming_file_notification)
-                            .setLocalOnly(true)
-                            .setVisibility(Notification.VISIBILITY_PRIVATE)
-                            .setPublicVersion(public_n)
-                            .build();
-            mNotificationMgr.notify(NOTIFICATION_ID_PROGRESS, n);
+            if (SystemProperties.get("ro.target.product","box").equals("box")) {
+                mContext.sendBroadcast(new Intent(baseIntent).setAction(Constants.ACTION_INCOMING_FILE_CONFIRM));
+            } else {
+                Notification.Action actionDecline =
+                        new Notification.Action.Builder(Icon.createWithResource(mContext,
+                                R.drawable.ic_decline),
+                                mContext.getText(R.string.incoming_file_confirm_cancel),
+                                PendingIntent.getBroadcast(mContext, 0,
+                                        new Intent(baseIntent).setAction(Constants.ACTION_DECLINE),
+                                        PendingIntent.FLAG_IMMUTABLE)).build();
+                Notification.Action actionAccept = new Notification.Action.Builder(
+                        Icon.createWithResource(mContext,R.drawable.ic_accept),
+                        mContext.getText(R.string.incoming_file_confirm_ok),
+                        PendingIntent.getBroadcast(mContext, 0,
+                                new Intent(baseIntent).setAction(Constants.ACTION_ACCEPT),
+                                PendingIntent.FLAG_IMMUTABLE)).build();
+                Notification public_n =
+                        new Notification.Builder(mContext, OPP_NOTIFICATION_CHANNEL).setOnlyAlertOnce(
+                                true)
+                                .setOngoing(true)
+                                .setWhen(info.mTimeStamp)
+                                .addAction(actionDecline)
+                                .addAction(actionAccept)
+                                .setContentIntent(PendingIntent.getBroadcast(mContext, 0,
+                                        new Intent(baseIntent).setAction(
+                                                Constants.ACTION_INCOMING_FILE_CONFIRM),
+                                        PendingIntent.FLAG_IMMUTABLE))
+                                .setDeleteIntent(PendingIntent.getBroadcast(mContext, 0,
+                                        new Intent(baseIntent).setAction(Constants.ACTION_HIDE),
+                                        PendingIntent.FLAG_IMMUTABLE))
+                                .setColor(mContext.getResources()
+                                        .getColor(
+                                                android.R.color
+                                                        .system_notification_accent_color,
+                                                mContext.getTheme()))
+                                .setContentTitle(mContext.getText(
+                                        R.string.incoming_file_confirm_Notification_title))
+                                .setContentText(fileNameSafe)
+                                .setStyle(new Notification.BigTextStyle().bigText(mContext.getString(
+                                        R.string.incoming_file_confirm_Notification_content,
+                                        info.mDeviceName, fileNameSafe)))
+                                .setSubText(Formatter.formatFileSize(mContext, info.mTotalBytes))
+                                .setSmallIcon(R.drawable.bt_incomming_file_notification)
+                                .setLocalOnly(true)
+                                .build();
+                Notification n =
+                        new Notification.Builder(mContext, OPP_NOTIFICATION_CHANNEL).setOnlyAlertOnce(
+                                true)
+                                .setOngoing(true)
+                                .setWhen(info.mTimeStamp)
+                                .setContentIntent(PendingIntent.getBroadcast(mContext, 0,
+                                        new Intent(baseIntent).setAction(
+                                                Constants.ACTION_INCOMING_FILE_CONFIRM),
+                                        PendingIntent.FLAG_IMMUTABLE))
+                                .setDeleteIntent(PendingIntent.getBroadcast(mContext, 0,
+                                        new Intent(baseIntent).setAction(Constants.ACTION_HIDE),
+                                        PendingIntent.FLAG_IMMUTABLE))
+                                .setColor(mContext.getResources()
+                                        .getColor(
+                                                android.R.color
+                                                        .system_notification_accent_color,
+                                                mContext.getTheme()))
+                                .setContentTitle(mContext.getText(
+                                        R.string.incoming_file_confirm_Notification_title))
+                                .setContentText(fileNameSafe)
+                                .setStyle(new Notification.BigTextStyle().bigText(mContext.getString(
+                                        R.string.incoming_file_confirm_Notification_content,
+                                        info.mDeviceName, fileNameSafe)))
+                                .setSubText(Formatter.formatFileSize(mContext, info.mTotalBytes))
+                                .setSmallIcon(R.drawable.bt_incomming_file_notification)
+                                .setLocalOnly(true)
+                                .setVisibility(Notification.VISIBILITY_PRIVATE)
+                                .setPublicVersion(public_n)
+                                .build();
+                mNotificationMgr.notify(NOTIFICATION_ID_PROGRESS, n);
+            }
         }
         cursor.close();
     }
