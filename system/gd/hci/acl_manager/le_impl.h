@@ -1088,8 +1088,8 @@ struct le_impl : public bluetooth::hci::LeAddressManagerCallback {
     }
   }
 
-  static constexpr uint16_t kMinimumCeLength = 0x0002;
-  static constexpr uint16_t kMaximumCeLength = 0x0C00;
+  static constexpr uint16_t kMinimumCeLength = 0x0000;
+  static constexpr uint16_t kMaximumCeLength = 0x0000;
   HciLayer* hci_layer_ = nullptr;
   Controller* controller_ = nullptr;
   os::Handler* handler_ = nullptr;
