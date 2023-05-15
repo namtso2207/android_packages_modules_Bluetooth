@@ -751,6 +751,10 @@ class HeadsetInterface : Interface {
 
 bt_status_t HeadsetInterface::Init(Callbacks* callbacks, int max_hf_clients,
                                    bool inband_ringing_enabled) {
+#if (DISABLE_WBS == TRUE)
+  btif_hf_features &= ~BTA_AG_FEAT_CODEC;
+#endif
+
   if (inband_ringing_enabled) {
     btif_hf_features |= BTA_AG_FEAT_INBAND;
   } else {
