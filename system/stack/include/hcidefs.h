@@ -900,6 +900,8 @@ typedef struct {
 
 // TODO: Remove this once Synaptics specific code is removed
 #define LMP_COMPID_SYNAPTICS 0x0A76
+//TODO: remove this once aic_semi specific hacks are removed
+#define LMP_COMPID_AIC_SEMI 0x0B3B
 
 /* Parameter information for HCI_SYNA_SET_ACL_PRIORITY */
 #define HCI_SYNA_ACL_PRIORITY_PARAM_SIZE 3

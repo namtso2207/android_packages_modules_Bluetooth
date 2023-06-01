@@ -2289,6 +2289,11 @@ static tBTM_STATUS bta_dm_sp_cback(tBTM_SP_EVT event,
             return BTM_CMD_STARTED;
           APPL_TRACE_WARNING(
               " bta_dm_sp_cback() -> Failed to start Remote Name Request  ");
+
+          sec_event.key_notif.bd_addr = p_data->cfm_req.bd_addr;
+          BTA_COPY_DEVICE_CLASS(sec_event.key_notif.dev_class,
+                                p_data->cfm_req.dev_class);
+          sec_event.key_notif.bd_name[0] = 0;
         } else {
           /* Due to the switch case falling through below to
              BTM_SP_KEY_NOTIF_EVT,

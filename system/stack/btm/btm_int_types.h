@@ -397,4 +397,7 @@ typedef struct tBTM_CB {
 
 typedef uint8_t tBTM_SEC_ACTION;
 
+#define BTM_IS_AIC_SEMI_CONTROLLER()                                 \
+  (controller_get_interface()->get_bt_version()->manufacturer == \
+   LMP_COMPID_AIC_SEMI)
 #endif  // BTM_INT_TYPES_H
