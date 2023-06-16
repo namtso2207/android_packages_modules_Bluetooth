@@ -19,6 +19,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "bdroid_buildcfg.h"
 
 /*******************
  * SCO Codec Types
@@ -59,7 +60,9 @@ typedef uint8_t esco_coding_format_t;
 typedef uint8_t esco_pcm_data_format_t;
 
 // SCO Data Path
+#ifndef ESCO_DATA_PATH_PCM
 #define ESCO_DATA_PATH_PCM 1                /* 0x01-0xFE (PCM Chan) */
+#endif
 #define ESCO_DATA_PATH_HCI 0                /* HCI-0, 0x01-0xFE (PCM Chan) */
 typedef uint8_t esco_data_path_t;
 
